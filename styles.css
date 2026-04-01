@@ -1,0 +1,274 @@
+:root {
+  --tan: #ede8d3;
+  --blue: #1a56fd;
+  --orange: #e85628;
+  --blue-dark: #1f31b2;
+  --ink: #1e1e1e;
+  --white: #ffffff;
+  --radius: 14px;
+}
+
+@font-face {
+  font-family: "Obviously";
+  src: url("assets/fonts/Obviously-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Obviously";
+  src: url("assets/fonts/Obviously-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Obviously";
+  src: url("assets/fonts/Obviously-Black.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Obviously", "Segoe UI", Arial, sans-serif;
+  background: var(--tan);
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+.container {
+  width: min(1100px, 92vw);
+  margin: 0 auto;
+}
+
+.section {
+  padding: 4.5rem 0;
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  font-weight: 700;
+  color: var(--blue-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0 0 1rem;
+  text-transform: uppercase;
+  line-height: 1.05;
+}
+
+h1 {
+  font-size: clamp(2.3rem, 8vw, 5.2rem);
+  font-weight: 900;
+  max-width: 14ch;
+}
+
+h2 {
+  font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+  font-weight: 700;
+  max-width: 34ch;
+}
+
+h3 {
+  font-size: clamp(1.6rem, 4vw, 2.5rem);
+  font-weight: 900;
+}
+
+h4 {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+p {
+  margin: 0 0 1rem;
+  font-weight: 500;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  backdrop-filter: blur(5px);
+  background: color-mix(in srgb, var(--tan) 86%, var(--white));
+  border-bottom: 1px solid color-mix(in srgb, var(--blue) 20%, transparent);
+}
+
+.nav-wrap {
+  min-height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand {
+  text-decoration: none;
+  color: var(--blue-dark);
+  font-weight: 900;
+}
+
+.hero {
+  background: linear-gradient(120deg, var(--tan) 0%, #f7f4ea 50%, var(--tan) 100%);
+}
+
+.lead {
+  max-width: 55ch;
+}
+
+.btn {
+  display: inline-block;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.78rem 1.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--orange);
+  color: var(--white);
+}
+
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  background: #cf471d;
+}
+
+.value {
+  background: var(--blue);
+  color: var(--white);
+}
+
+.value .eyebrow {
+  color: #9cb7ff;
+}
+
+.services {
+  background: var(--tan);
+}
+
+.section-intro {
+  max-width: 56ch;
+}
+
+.service-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.card {
+  background: var(--white);
+  border: 2px solid color-mix(in srgb, var(--blue) 15%, transparent);
+  border-radius: var(--radius);
+  padding: 1.2rem;
+}
+
+.callouts {
+  background: var(--orange);
+  color: var(--white);
+}
+
+.callouts .eyebrow {
+  color: #ffd5c6;
+}
+
+.callout-stack {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.callout {
+  font-size: clamp(1.3rem, 4.6vw, 2.3rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+  font-weight: 900;
+  margin: 0;
+}
+
+.contact {
+  background: var(--blue-dark);
+  color: var(--white);
+}
+
+.contact .eyebrow {
+  color: #8aa3ff;
+}
+
+.contact-wrap {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  align-items: end;
+}
+
+.contact-actions {
+  min-width: 260px;
+}
+
+.contact-line {
+  margin: 0.5rem 0 0;
+  font-size: 0.96rem;
+}
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.social-links a {
+  color: var(--white);
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+.social-links a:hover,
+.social-links a:focus-visible {
+  color: #c9d6ff;
+}
+
+.nav-cta {
+  color: var(--blue-dark);
+  font-weight: 700;
+}
+
+.site-footer {
+  padding: 1.5rem 0 2.5rem;
+}
+
+.site-footer p {
+  margin: 0;
+  color: #514f46;
+}
+
+@media (max-width: 900px) {
+  .service-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
