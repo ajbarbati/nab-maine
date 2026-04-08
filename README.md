@@ -34,11 +34,10 @@ When you are ready to connect the custom domain:
    - `CNAME` for `www` to `<username>.github.io`.
 3. Enable HTTPS in GitHub Pages once DNS is active.
 
-## Contact Setup In v1
+## Contact & Lead Forms
 
-Current version uses direct email CTA (no form backend):
+The contact section and “Get Started” modal submit by opening the visitor’s email client with a pre-filled message to:
 
-- `maria@nabmaine.com`
-- `mike@nabmaine.com`
+- `maria@nabmaine.com` (CC: `mike@nabmaine.com`)
 
-Future upgrade option: Formspree/Getform embedded contact form.
+No server or Google Form is required for that flow. To switch to a Google Form later, replace the form `action` with your Form `formResponse` URL and map `name="entry.…"` fields to each Google Form question.
