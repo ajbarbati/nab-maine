@@ -8,10 +8,10 @@
   --radius: 14px;
   --modal-radius: 24px;
   --z-modal: 1000;
-  /* Top bar: neutral chrome, not brand palette */
-  --header-bg: #2a2a2e;
+  /* Top bar: brand blue */
+  --header-bg: var(--blue-dark);
   --header-text: #f4f4f5;
-  --header-border: rgba(255, 255, 255, 0.1);
+  --header-border: color-mix(in srgb, var(--blue) 35%, transparent);
 }
 
 @font-face {
