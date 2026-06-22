@@ -24,15 +24,19 @@ const GOOGLE_FORM = {
     name: "entry.1260104118",
     email: "entry.459590106",
     business: "entry.1133418237",
+    billboard: "entry.487646327",
     source: "entry.925397380",
   },
 };
 
-async function submitToGoogleForm({ name, email, business, source }) {
+async function submitToGoogleForm({ name, email, business, billboard, source }) {
   const body = new URLSearchParams();
   body.set(GOOGLE_FORM.entries.name, name);
   body.set(GOOGLE_FORM.entries.email, email);
   body.set(GOOGLE_FORM.entries.business, business);
+  if (billboard) {
+    body.set(GOOGLE_FORM.entries.billboard, billboard);
+  }
   body.set(GOOGLE_FORM.entries.source, source);
 
   await fetch(GOOGLE_FORM.action, {
@@ -95,7 +99,7 @@ function openModal(modalId, trigger) {
   modal.hidden = false;
   document.body.classList.add("modal-open");
 
-  const focusTarget = modal.querySelector("input, button");
+  const focusTarget = modal.querySelector("input, textarea, button");
   if (focusTarget) {
     focusTarget.focus();
   }
@@ -173,6 +177,7 @@ if (contactForm) {
     const name = String(data.get("name") || "").trim();
     const business = String(data.get("business") || "").trim();
     const email = String(data.get("email") || "").trim();
+    const billboard = String(data.get("billboard") || "").trim();
 
     runFormSubmit({
       submitBtn,
@@ -181,6 +186,7 @@ if (contactForm) {
           name,
           email,
           business,
+          billboard,
           source: "Contact",
         }),
       onDone: () => {
@@ -207,6 +213,7 @@ if (kmbfForm) {
     const name = String(data.get("name") || "").trim();
     const email = String(data.get("email") || "").trim();
     const business = String(data.get("business") || "").trim();
+    const billboard = String(data.get("billboard") || "").trim();
 
     runFormSubmit({
       submitBtn,
@@ -215,6 +222,7 @@ if (kmbfForm) {
           name,
           email,
           business,
+          billboard,
           source: "KMBF",
         }),
       onDone: () => {

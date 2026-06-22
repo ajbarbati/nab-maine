@@ -990,7 +990,8 @@ p {
   color: var(--blue-dark);
 }
 
-.contact-form input {
+.contact-form input,
+.contact-form textarea {
   border-radius: 10px;
   border: 2px solid color-mix(in srgb, var(--blue) 30%, transparent);
   background: var(--white);
@@ -999,13 +1000,22 @@ p {
   font-family: inherit;
   font-weight: 500;
   text-transform: none;
+  width: 100%;
 }
 
-.contact-form input::placeholder {
+.contact-form textarea {
+  min-height: 6.5rem;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
   color: color-mix(in srgb, var(--ink) 42%, transparent);
 }
 
-.contact-form input:focus-visible {
+.contact-form input:focus-visible,
+.contact-form textarea:focus-visible {
   outline: 2px solid var(--orange);
   outline-offset: 2px;
   border-color: color-mix(in srgb, var(--blue) 55%, transparent);
@@ -1144,16 +1154,25 @@ p {
   letter-spacing: 0.03em;
 }
 
-.lead-form input {
+.lead-form input,
+.lead-form textarea {
   border-radius: 10px;
   border: 2px solid color-mix(in srgb, var(--blue) 25%, transparent);
   padding: 0.6rem 0.75rem;
   font-family: inherit;
   font-weight: 500;
   text-transform: none;
+  width: 100%;
 }
 
-.lead-form input:focus-visible {
+.lead-form textarea {
+  min-height: 6rem;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.lead-form input:focus-visible,
+.lead-form textarea:focus-visible {
   outline: 2px solid var(--orange);
   outline-offset: 2px;
 }
