@@ -36,8 +36,27 @@ When you are ready to connect the custom domain:
 
 ## Contact & Lead Forms
 
-The contact section and “Get Started” modal submit by opening the visitor’s email client with a pre-filled message to:
+The contact section and KMBF popup submit to a Google Form via `fetch` (no backend required). Responses are tagged with a **Source** field (`Contact` or `KMBF`).
 
-- `maria@nabmaine.com` (CC: `mike@nabmaine.com`)
+### Google Form setup
 
-No server or Google Form is required for that flow. To switch to a Google Form later, replace the form `action` with your Form `formResponse` URL and map `name="entry.…"` fields to each Google Form question.
+The form must include these short-answer questions:
+
+- Name
+- Email
+- Business
+- Source
+
+Form editor ID: `1AVMTqlsORGJSilkn4Vd96_EX_OTO00bWydJroZNj4xY`
+
+### Entry ID extraction
+
+If you add or rename Google Form questions, re-run:
+
+```bash
+node scripts/extract-google-form-entries.mjs
+```
+
+Paste the printed `GOOGLE_FORM` config into the top of `script.js`.
+
+The script fetches the public form HTML and parses `FB_PUBLIC_LOAD_DATA_` to map question titles to `entry.XXXXXXXX` IDs. It also prints the correct `formResponse` action URL.

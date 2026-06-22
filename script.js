@@ -17,102 +17,219 @@ if (yearNode) {
   yearNode.textContent = String(new Date().getFullYear());
 }
 
-function buildMailtoBody(fields) {
-  return fields
-    .map(({ label, value }) => `${label}: ${value}`)
-    .join("\n");
-}
+const GOOGLE_FORM = {
+  action:
+    "https://docs.google.com/forms/d/e/1FAIpQLSc4gvr49wFNpvwdC459reEeryTBppB96zhk3F1aUbJSQ1ktvg/formResponse",
+  entries: {
+    name: "entry.1260104118",
+    email: "entry.459590106",
+    business: "entry.1133418237",
+    source: "entry.925397380",
+  },
+};
 
-function openMailto({ subject, body }) {
-  const params = new URLSearchParams();
-  params.set("subject", subject);
-  params.set("body", body);
-  window.location.href = `mailto:maria@nabmaine.com?cc=mike@nabmaine.com&${params.toString()}`;
-}
+async function submitToGoogleForm({ name, email, business, source }) {
+  const body = new URLSearchParams();
+  body.set(GOOGLE_FORM.entries.name, name);
+  body.set(GOOGLE_FORM.entries.email, email);
+  body.set(GOOGLE_FORM.entries.business, business);
+  body.set(GOOGLE_FORM.entries.source, source);
 
-const contactForm = document.getElementById("contact-form");
-if (contactForm) {
-  contactForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const data = new FormData(contactForm);
-    const name = String(data.get("name") || "").trim();
-    const business = String(data.get("business") || "").trim();
-    const email = String(data.get("email") || "").trim();
-    const body = buildMailtoBody([
-      { label: "Name", value: name },
-      { label: "Business", value: business },
-      { label: "Email", value: email },
-    ]);
-    openMailto({
-      subject: "Contact from nabmaine.com",
-      body,
-    });
+  await fetch(GOOGLE_FORM.action, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: body.toString(),
   });
 }
 
-const leadModal = document.getElementById("lead-modal");
-const leadForm = document.getElementById("lead-modal-form");
-let lastFocus = null;
+const SENDING_TO_SENT_MS = 1200;
+const SENT_TO_DONE_MS = 800;
 
-function setModalOpen(isOpen) {
-  if (!leadModal) return;
-  leadModal.hidden = !isOpen;
-  document.body.classList.toggle("modal-open", isOpen);
-  if (isOpen) {
-    const focusTarget = leadModal.querySelector("input, button");
-    if (focusTarget) {
-      focusTarget.focus();
+function wait(ms) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+}
+
+async function runFormSubmit({ submitBtn, submitFn, onDone }) {
+  const originalLabel = submitBtn ? submitBtn.textContent : "";
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending…";
+  }
+
+  let submitFailed = false;
+  submitFn().catch(() => {
+    submitFailed = true;
+  });
+
+  await wait(SENDING_TO_SENT_MS);
+
+  if (submitFailed) {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
     }
-  } else if (lastFocus) {
+    return;
+  }
+
+  if (submitBtn) {
+    submitBtn.textContent = "Sent";
+  }
+
+  await wait(SENT_TO_DONE_MS);
+  onDone();
+}
+
+let lastFocus = null;
+let activeModal = null;
+
+function openModal(modalId, trigger) {
+  const modal = document.getElementById(modalId);
+  if (!modal) return;
+
+  lastFocus = trigger || document.activeElement;
+  activeModal = modal;
+  modal.hidden = false;
+  document.body.classList.add("modal-open");
+
+  const focusTarget = modal.querySelector("input, button");
+  if (focusTarget) {
+    focusTarget.focus();
+  }
+}
+
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (!modal || modal.hidden) return;
+
+  modal.hidden = true;
+  if (activeModal === modal) {
+    activeModal = null;
+  }
+
+  if (!document.querySelector(".modal-backdrop:not([hidden])")) {
+    document.body.classList.remove("modal-open");
+  }
+
+  if (lastFocus && typeof lastFocus.focus === "function") {
     lastFocus.focus();
     lastFocus = null;
   }
 }
 
-document.querySelectorAll("[data-open-modal]").forEach((trigger) => {
-  trigger.addEventListener("click", () => {
-    const id = trigger.getAttribute("data-open-modal");
-    if (id === "lead-modal" && leadModal) {
-      lastFocus = trigger;
-      setModalOpen(true);
-    }
-  });
-});
-
-document.querySelectorAll("[data-close-modal]").forEach((btn) => {
-  btn.addEventListener("click", () => setModalOpen(false));
-});
-
-if (leadModal) {
-  leadModal.addEventListener("click", (event) => {
-    if (event.target === leadModal) {
-      setModalOpen(false);
-    }
-  });
+function closeActiveModal() {
+  if (!activeModal) return;
+  const modalId = activeModal.id;
+  if (modalId === "kmbf-modal") {
+    sessionStorage.setItem("kmbf-dismissed", "1");
+  }
+  closeModal(modalId);
 }
 
+document.querySelectorAll("[data-close-modal]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const modal = btn.closest(".modal-backdrop");
+    if (modal) {
+      if (modal.id === "kmbf-modal") {
+        sessionStorage.setItem("kmbf-dismissed", "1");
+      }
+      closeModal(modal.id);
+    }
+  });
+});
+
+document.querySelectorAll(".modal-backdrop").forEach((modal) => {
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      if (modal.id === "kmbf-modal") {
+        sessionStorage.setItem("kmbf-dismissed", "1");
+      }
+      closeModal(modal.id);
+    }
+  });
+});
+
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && leadModal && !leadModal.hidden) {
-    setModalOpen(false);
+  if (event.key === "Escape" && activeModal) {
+    if (activeModal.id === "kmbf-modal") {
+      sessionStorage.setItem("kmbf-dismissed", "1");
+    }
+    closeModal(activeModal.id);
   }
 });
 
-if (leadForm) {
-  leadForm.addEventListener("submit", (event) => {
+const contactForm = document.getElementById("contact-form");
+const contactSuccess = document.getElementById("contact-form-success");
+
+if (contactForm) {
+  contactForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    const data = new FormData(leadForm);
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+
+    const data = new FormData(contactForm);
+    const name = String(data.get("name") || "").trim();
+    const business = String(data.get("business") || "").trim();
+    const email = String(data.get("email") || "").trim();
+
+    runFormSubmit({
+      submitBtn,
+      submitFn: () =>
+        submitToGoogleForm({
+          name,
+          email,
+          business,
+          source: "Contact",
+        }),
+      onDone: () => {
+        contactForm.querySelectorAll(".field, button").forEach((el) => {
+          el.hidden = true;
+        });
+        if (contactSuccess) {
+          contactSuccess.hidden = false;
+        }
+      },
+    });
+  });
+}
+
+const kmbfModal = document.getElementById("kmbf-modal");
+const kmbfForm = document.getElementById("kmbf-modal-form");
+
+if (kmbfForm) {
+  kmbfForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const submitBtn = kmbfForm.querySelector('button[type="submit"]');
+
+    const data = new FormData(kmbfForm);
     const name = String(data.get("name") || "").trim();
     const email = String(data.get("email") || "").trim();
     const business = String(data.get("business") || "").trim();
-    const body = buildMailtoBody([
-      { label: "Name", value: name },
-      { label: "Email", value: email },
-      { label: "Business name", value: business },
-    ]);
-    openMailto({
-      subject: "Lead from nabmaine.com (Get Started)",
-      body,
+
+    runFormSubmit({
+      submitBtn,
+      submitFn: () =>
+        submitToGoogleForm({
+          name,
+          email,
+          business,
+          source: "KMBF",
+        }),
+      onDone: () => {
+        sessionStorage.setItem("kmbf-dismissed", "1");
+        closeModal("kmbf-modal");
+        kmbfForm.reset();
+      },
     });
-    setModalOpen(false);
   });
+}
+
+if (kmbfModal && !sessionStorage.getItem("kmbf-dismissed")) {
+  window.setTimeout(() => {
+    if (!sessionStorage.getItem("kmbf-dismissed")) {
+      openModal("kmbf-modal");
+    }
+  }, 2500);
 }
